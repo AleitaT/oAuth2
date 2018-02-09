@@ -3,5 +3,23 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    meta(name='description' content='Personal Website')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    //-- script(src='..javascripts/config.js')
+    //-- script(src='../javascripts/oauth.js')
+
+  style
+      include ../public/stylesheets/style.css
+
   body
+    block head
+      nav
+        a(href='/') Home
+        a(href='/oauth2') oAuth2
+        a(href='/about') About
+        a(href='/resume') Resume
+
+
     block content
+
+
