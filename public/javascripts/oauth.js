@@ -14,7 +14,6 @@ exports.prepareOauth = function() {
 	 	callback: config.REDIRECT_URI
 	}
 	let state = Math.random().toString(36).substring(7);
-	console.log("state is", state);
 	let requestURI = 
 		'https://accounts.google.com/o/oauth2/v2/auth?' +
 		 'scope=' + params.scope +
