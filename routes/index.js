@@ -58,28 +58,58 @@ router.use('/oauth2callback', function(req, res, next) {
 		state: req.query.state,
 		client_id: config.GOOGLE_CLIENT_ID,
 		client_secret: config.GOOGLE_CLIENT_SECRET,
-		redirect_uri: 'http://dev.alietatrain.com:3000/oauth2callback',
+		redirect_uri: config.REDIRECT_URI,
 		grant_type:'authorization_code'
 	};
-
 	request.post('https://www.googleapis.com/oauth2/v4/token', { 
 		form: { 
 			'code': client.code,
+			'state': client.state,
 			'client_id': client.client_id,
 			'client_secret': client.client_secret,
 			'redirect_uri': client.redirect_uri,
 			'grant_type': 'authorization_code'
 		}
-	}, function(error, response, body) {
-			if(!error && response.statusCode == 200) {
-				console.log('success!');
-				res.render('oauth2callback');
-			} else { 
-				console.log("no no", response); 
-			}
-			console.log(body);
+	}, function(error, request, response) {
+		if( error ) {
+			console.log("Error getting token", response); 
+			return;
+		}
+		console.log('success!');
+		let body = response.toString();
+		body = JSON.parse(body);
+		let user = getUserDetails(body.access_token, function(user) {
+			if(!user) {
+				console.log("Error here", err);
+			} else {
+				res.render('oauth2callback', {
+					firstname: user.given_name,
+					lastname: user.family_name,
+					google: user.link,
+					state: client.state
+				});
+			};
+		});
+		
 	});
 });
+
+function getUserDetails(token, cb){
+	let thisToken = token;
+	let url = "https://www.googleapis.com/oauth2/v2/userinfo";
+	request.get(url, {
+		headers: {
+			Authorization: "Bearer " + thisToken
+		}
+	}, function(err, req, res) {
+		if(err) {
+			console.log("ERROR: ", err);
+		}
+		let user = res.toString();
+		user = JSON.parse(res);
+		cb (user);
+	});
+};
 /*
 router.use('/oauth2callback', function(err, req, res, next) {
 	// first check for error 
@@ -117,6 +147,5 @@ router.use('/oauth2callback', function(err, req, res, next) {
 			console.log(body);
 	});
 })*/
-	
 
 module.exports = router;

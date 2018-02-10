@@ -35,7 +35,11 @@ nav > a {
 }
 
 article {
-	width: 70%;
-	margin: auto;
+	width: 66%;
+	margin: 10px auto 10px auto;
+	padding: 2%;
 	background-color: #e3a93b;
+	font-color: white;
+
+	border-radius: 25px;
 }
