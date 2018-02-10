@@ -51,6 +51,8 @@ router.get('/auth/google', function(req, res, next) {
 });
 
 router.use('/oauth2callback', function(req, res, next) {
+	// first check for error 
+
 	var client = {
 		code: req.query.code,
 		state: req.query.state,
@@ -59,7 +61,7 @@ router.use('/oauth2callback', function(req, res, next) {
 		redirect_uri: 'http://dev.alietatrain.com:3000/oauth2callback',
 		grant_type:'authorization_code'
 	};
-	console.log("client", client);
+
 	request.post('https://www.googleapis.com/oauth2/v4/token', { 
 		form: { 
 			'code': client.code,
@@ -78,6 +80,43 @@ router.use('/oauth2callback', function(req, res, next) {
 			console.log(body);
 	});
 });
+/*
+router.use('/oauth2callback', function(err, req, res, next) {
+	// first check for error 
+	if(err || !req || res.statusCode == 200) 
+		return err;
+
+	// then comtinue
+	var client = {
+		code: req.query.code,
+		state: req.query.state,
+		client_id: config.GOOGLE_CLIENT_ID,
+		client_secret: config.GOOGLE_CLIENT_SECRET,
+		redirect_uri: 'http://dev.alietatrain.com:3000/oauth2callback',
+		grant_type:'authorization_code'
+	};
+}, function(err, req, res, next) {
+	if (err) 
+		return err;
+
+	request.post('https://www.googleapis.com/oauth2/v4/token', { 
+		form: { 
+			'code': client.code,
+			'client_id': client.client_id,
+			'client_secret': client.client_secret,
+			'redirect_uri': client.redirect_uri,
+			'grant_type': 'authorization_code'
+		}
+	}, function(error, response, body) {
+			if(!error && response.statusCode == 200) {
+				console.log('success!');
+				res.render('oauth2callback');
+			} else { 
+				console.log("no no", response); 
+			}
+			console.log(body);
+	});
+})*/
 	
 
 module.exports = router;
